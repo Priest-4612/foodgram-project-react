@@ -4,3 +4,4 @@ djoser==2.1.0
 requests==2.26.0
 djangorestframework-simplejwt==4.8.0
 python-dotenv==0.13.0
+pillow
