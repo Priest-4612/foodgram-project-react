@@ -79,3 +79,50 @@ class Recipe(models.Model):
         related_name='recipes'
     )
     cooking_time = models.IntegerField()
+
+
+class Follow(models.Model):
+    user = models.ForeignKey(
+        User,
+        related_name='follower',
+        on_delete=models.CASCADE
+    )
+    author = models.ForeignKey(
+        User,
+        related_name='following',
+        on_delete=models.CASCADE
+    )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'author'],
+                name='unique_author_user_following'
+            )
+        ]
+
+    def __str__(self) -> str:
+        return (
+            f'Автор: {self.author} '
+            f'- Подписчик: {self.user}'
+        )
+
+
+class Favorite(models.Model):
+    user = models.ForeignKey(
+        to=User,
+        on_delete=models.CASCADE,
+        related_name='favorites'
+    ),
+    recipe = models.ForeignKey(
+        to=Recipe,
+        on_delete=models.CASCADE
+    )
+
+    class Meta:
+        models.UniqueConstraint(
+            fields=['user', 'recipe'],
+            name='unique_recipe_user_favorite'
+        )
+
+
