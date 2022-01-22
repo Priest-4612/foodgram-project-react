@@ -8,7 +8,7 @@ class Measure(models.Model):
     name = models.CharField(
         max_length=32,
         verbose_name='measures',
-        unique=True,
+        unique=True
     )
 
 
@@ -16,13 +16,13 @@ class IngredientList(models.Model):
     name = models.CharField(
         max_length=256,
         unique=True,
-        verbose_name='ingredients',
+        verbose_name='ingredients'
     )
     measurement_unit = models.ForeignKey(
         to=Measure,
         on_delete=models.CASCADE,
         verbose_name='measurement unit',
-        related_name='ingredient_list',
+        related_name='ingredient_list'
     )
 
 
@@ -34,7 +34,7 @@ class Ingredient(models.Model):
         verbose_name='ingredients',
     )
     amount = models.PositiveIntegerField(
-        verbose_name='amount',
+        verbose_name='amount'
     )
 
 
@@ -42,7 +42,7 @@ class Tag(models.Model):
     name = models.CharField(
         max_length=256,
         verbose_name='tags',
-        unique=True,
+        unique=True
     )
     color = models.CharField(
         max_length=16,
@@ -50,8 +50,9 @@ class Tag(models.Model):
         unique=True
     )
     slug = models.SlugField(
-        unique=True,
-        verbose_name='slugs'
+        max_length=256,
+        verbose_name='slugs',
+        unique=True
     )
 
 
@@ -83,12 +84,12 @@ class Recipe(models.Model):
 
 class Follow(models.Model):
     user = models.ForeignKey(
-        User,
+        to=User,
         related_name='follower',
         on_delete=models.CASCADE
     )
     author = models.ForeignKey(
-        User,
+        to=User,
         related_name='following',
         on_delete=models.CASCADE
     )
@@ -113,10 +114,11 @@ class Favorite(models.Model):
         to=User,
         on_delete=models.CASCADE,
         related_name='favorites'
-    ),
+    )
     recipe = models.ForeignKey(
         to=Recipe,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name='favorites'
     )
 
     class Meta:
@@ -124,5 +126,3 @@ class Favorite(models.Model):
             fields=['user', 'recipe'],
             name='unique_recipe_user_favorite'
         )
-
-
