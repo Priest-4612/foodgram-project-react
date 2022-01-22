@@ -2,7 +2,9 @@ import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+
 SECRET_KEY = '6ie35&b0!293=e)$396eatozq_!l$=(y^fcp%izmimz@hsc^z&'
+
 
 DEBUG = True
 
@@ -20,7 +22,11 @@ INSTALLED_APPS = [
     'rest_framework',
     'djoser',
     'recipes',
+    'users',
 ]
+
+
+AUTH_USER_MODEL = 'users.User'
 
 
 MIDDLEWARE = [
@@ -52,6 +58,7 @@ TEMPLATES = [
         },
     },
 ]
+
 
 WSGI_APPLICATION = 'api_foodgram.wsgi.application'
 
