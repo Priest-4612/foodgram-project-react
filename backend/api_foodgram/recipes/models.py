@@ -13,7 +13,6 @@ class Measure(models.Model):
 class IngredientList(models.Model):
     name = models.CharField(
         max_length=256,
-        unique=True,
         verbose_name='ingredients'
     )
     measurement_unit = models.ForeignKey(
