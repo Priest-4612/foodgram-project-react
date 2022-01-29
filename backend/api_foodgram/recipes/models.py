@@ -13,6 +13,7 @@ class Measure(models.Model):
 class IngredientList(models.Model):
     name = models.CharField(
         max_length=256,
+        unique=True,
         verbose_name='ingredients'
     )
     measurement_unit = models.ForeignKey(
@@ -87,7 +88,7 @@ class Follow(models.Model):
     )
     author = models.ForeignKey(
         to=User,
-        related_name='followed',
+        related_name='following',
         on_delete=models.CASCADE
     )
 
