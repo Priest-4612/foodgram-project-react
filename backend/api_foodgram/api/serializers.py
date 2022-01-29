@@ -12,7 +12,6 @@ ERROR_FORBIDDEN_USERNAME = ('Использовать имя "{username}" в к�
 
 class MeSerializer(serializers.ModelSerializer):
     is_subscribe = serializers.SerializerMethodField()
-
     email = serializers.EmailField(
         max_length=150,
         required=True,
@@ -41,7 +40,8 @@ class MeSerializer(serializers.ModelSerializer):
 
     class Meta:
         fields = [
-            'username', 'email', 'first_name', 'last_name', 'is_subscribe'
+            'email', 'id', 'username',
+            'first_name', 'last_name', 'is_subscribe'
         ]
         model = User
 
@@ -55,7 +55,9 @@ class MeSerializer(serializers.ModelSerializer):
 
 class UserSerualizer(serializers.ModelSerializer):
     is_subscribe = serializers.SerializerMethodField()
-
+    id = serializers.IntegerField(
+        read_only=True
+    )
     email = serializers.EmailField(
         max_length=150,
         required=True,
@@ -84,7 +86,8 @@ class UserSerualizer(serializers.ModelSerializer):
 
     class Meta:
         fields = [
-            'username', 'email', 'first_name', 'last_name', 'is_subscribe'
+            'email', 'id', 'username',
+            'first_name', 'last_name', 'is_subscribe'
         ]
         model = User
 
