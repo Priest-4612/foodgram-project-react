@@ -1,10 +1,10 @@
 from django.shortcuts import render
-from rest_framework import viewsets, status
+from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from users.models import User
 
-from .serializers import UserSerualizer, MeSerializer
+from .serializers import MeSerializer, UserSerualizer
 
 
 class UserViewSet(viewsets.ModelViewSet):
