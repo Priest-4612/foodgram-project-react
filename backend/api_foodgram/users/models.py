@@ -12,6 +12,8 @@ class User(AbstractUser):
                                 'username запрещено.')
 
     email = models.EmailField(
+        db_index=True,
+        unique=True,
         max_length=254,
         blank=False
     )
@@ -24,12 +26,15 @@ class User(AbstractUser):
         blank=False
     )
 
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username']
+
+    class Meta:
+        ordering = ['-username', '-date_joined']
+
     def save(self, *args, **kwargs):
         if self.username in self.FORBIDDEN_USERNAME and not self.is_superuser:
             raise ValidationError(
                 self.ERROR_FORBIDDEN_USERNAME.format(username=self.username)
             )
         super().save(*args, **kwargs)
-
-    class Meta:
-        ordering = ['-username', '-date_joined']
