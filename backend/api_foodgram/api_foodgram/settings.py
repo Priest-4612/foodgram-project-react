@@ -5,17 +5,21 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ENV_PATH = os.path.join(os.path.dirname(os.path.dirname(BASE_DIR)), 'infra', '.env')
+load_dotenv(dotenv_path=ENV_PATH)
+
+SECRET_KEY = os.getenv(
+    'APP_KEY',
+    default='6ie35&b0!293=e)$396eatozq_!l$=(y^fcp%izmimz@hsc^z&'
+)
+
+DEBUG = os.getenv('APP_DEBUG', default=False)
 
 
-SECRET_KEY = '6ie35&b0!293=e)$396eatozq_!l$=(y^fcp%izmimz@hsc^z&'
-
-
-DEBUG = True
-
-
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    os.getenv('APP_URL'),
+]
 
 
 INSTALLED_APPS = [
@@ -71,8 +75,8 @@ DATABASES = {
     'default': {
         'ENGINE': os.getenv('DB_ENGINE', default='django.db.backends.postgresql'),
         'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('POSTGRES_USER'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
+        'USER': os.getenv('DB_USERNAME'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
         'HOST': os.getenv('DB_HOST'),
         'PORT': os.getenv('DB_PORT')
     }
