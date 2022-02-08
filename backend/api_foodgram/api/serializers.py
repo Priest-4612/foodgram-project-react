@@ -60,32 +60,32 @@ class CustomUserSerializer(UserSerializer):
         return value
 
 
-# class DefaultUserSerializer(serializers.ModelSerializer):
-#     email = serializers.EmailField(
-#         required=True,
-#         max_length=150,
-#         validators=[UniqueValidator(queryset=User.objects.all())]
-#     )
-#     username = serializers.CharField(
-#         required=True,
-#         max_length=150,
-#         validators=[UniqueValidator(queryset=User.objects.all())]
-#     )
-#     first_name = serializers.CharField(
-#         max_length=150,
-#         required=True
-#     )
-#     last_name = serializers.CharField(
-#         max_length=150,
-#         required=True
-#     )
+class DefaultUserSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(
+        required=True,
+        max_length=150,
+        validators=[UniqueValidator(queryset=User.objects.all())]
+    )
+    username = serializers.CharField(
+        required=True,
+        max_length=150,
+        validators=[UniqueValidator(queryset=User.objects.all())]
+    )
+    first_name = serializers.CharField(
+        max_length=150,
+        required=True
+    )
+    last_name = serializers.CharField(
+        max_length=150,
+        required=True
+    )
 
-#     def validate_username(self, value):
-#         if value in FORBIDDEN_USERNAME:
-#             raise serializers.ValidationError(
-#                 self.ERROR_FORBIDDEN_USERNAME.format(username=value)
-#             )
-#         return value
+    def validate_username(self, value):
+        if value in FORBIDDEN_USERNAME:
+            raise serializers.ValidationError(
+                self.ERROR_FORBIDDEN_USERNAME.format(username=value)
+            )
+        return value
 
 
 # class RegisterSerializers(DefaultUserSerializer):
@@ -112,25 +112,25 @@ class CustomUserSerializer(UserSerializer):
 #         return user
 
 
-# class UserSerializer(DefaultUserSerializer):
-#     is_subscribe = serializers.SerializerMethodField()
-#     id = serializers.IntegerField(
-#         read_only=True
-#     )
+class UserSerializer(DefaultUserSerializer):
+    is_subscribe = serializers.SerializerMethodField()
+    id = serializers.IntegerField(
+        read_only=True
+    )
 
-#     class Meta:
-#         fields = [
-#             'email', 'id', 'username',
-#             'first_name', 'last_name', 'is_subscribe'
-#         ]
-#         model = User
+    class Meta:
+        fields = [
+            'email', 'id', 'username',
+            'first_name', 'last_name', 'is_subscribe'
+        ]
+        model = User
 
-#     def get_is_subscribe(self, obj):
-#         user = self.context['request'].user
-#         return (
-#             user
-#             and obj.followed.filter(user__username=user).exists()
-#         )
+    def get_is_subscribe(self, obj):
+        user = self.context['request'].user
+        return (
+            user
+            and obj.followed.filter(user__username=user).exists()
+        )
 
 
 # class LoginSerializer(serializers.Serializer):
