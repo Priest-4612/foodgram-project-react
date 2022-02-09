@@ -37,17 +37,17 @@ class Ingredient(models.Model):
 
 class Tag(models.Model):
     name = models.CharField(
-        max_length=256,
+        max_length=200,
         verbose_name='tags',
         unique=True
     )
     color = models.CharField(
-        max_length=16,
+        max_length=7,
         verbose_name='Hex codes',
         unique=True
     )
     slug = models.SlugField(
-        max_length=256,
+        max_length=200,
         verbose_name='slugs',
         unique=True
     )
