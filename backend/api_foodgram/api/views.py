@@ -1,11 +1,11 @@
 from djoser import views as djoser
+from recipes.models import Tag
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from users.models import User
-from recipes.models import Tag
 
 from .serializers import TagSerializer, UserSerializer
 
