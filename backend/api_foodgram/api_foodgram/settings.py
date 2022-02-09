@@ -116,6 +116,13 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
 }
 
+
+DJOSER = {
+    'USER_ID_FIELD': 'id',
+    'HIDE_USERS': False
+}
+
+
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
