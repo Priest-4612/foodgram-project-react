@@ -1,10 +1,10 @@
-from djoser.serializers import UserSerializer
-from recipes.models import Follow
+from djoser import serializers as djoser
+from recipes.models import Follow, Tag
 from rest_framework import serializers
 from users.models import User
 
 
-class CustomUserSerializer(UserSerializer):
+class UserSerializer(djoser.UserSerializer):
     is_subscribe = serializers.SerializerMethodField()
     password = serializers.CharField(
         write_only=True
@@ -32,3 +32,10 @@ class CustomUserSerializer(UserSerializer):
         user.set_password(validated_data['password'])
         user.save()
         return user
+
+
+class TagSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Tag
+        fields = '__all__'

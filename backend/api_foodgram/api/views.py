@@ -1,11 +1,29 @@
 from djoser import views as djoser
+from recipes.models import Tag
+from rest_framework import status, viewsets
+from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
 from users.models import User
 
-from .serializers import CustomUserSerializer
+from .serializers import TagSerializer, UserSerializer
 
 
 class UserViewSet(djoser.UserViewSet):
-    serializer_class = CustomUserSerializer
+    serializer_class = UserSerializer
     queryset = User.objects.all()
     pagination_class = PageNumberPagination
+
+    @action(detail=False, methods=['get'])
+    def me(self, request):
+        user = request.user
+        serializer = UserSerializer(user)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+
+class TagViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = TagSerializer
+    queryset = Tag.objects.all()
+    permission_classes = [AllowAny]
+    pagination_class = None
