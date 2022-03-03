@@ -1,5 +1,10 @@
+from django.core.validators import MinValueValidator
 from django.db import models
 from users.models import User
+
+ERROR_MIN_VALUE = 'Величина не может быть меньше {min_value}'
+MIN_COOKING_TIME = 1
+MIN_INGREDIENT_AMOUNT = 1
 
 
 class Measure(models.Model):
@@ -43,7 +48,11 @@ class CountOfIngredient(models.Model):
         verbose_name='ingredients',
     )
     amount = models.PositiveIntegerField(
-        verbose_name='amount'
+        verbose_name='amount',
+        validators=(MinValueValidator(
+            limit_value=MIN_INGREDIENT_AMOUNT,
+            message=ERROR_MIN_VALUE.format(min_value=MIN_INGREDIENT_AMOUNT)
+        ))
     )
 
     def __str__(self):
@@ -97,7 +106,12 @@ class Recipe(models.Model):
         to=Tag,
         related_name='recipes'
     )
-    cooking_time = models.PositiveIntegerField()
+    cooking_time = models.PositiveIntegerField(
+        validators=(MinValueValidator(
+            limit_value=MIN_COOKING_TIME,
+            message=ERROR_MIN_VALUE.format(min_value=MIN_COOKING_TIME)
+        ))
+    )
 
     class Meta:
         ordering = ['-pk']
