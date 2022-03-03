@@ -52,7 +52,7 @@ class CountOfIngredient(models.Model):
         validators=(MinValueValidator(
             limit_value=MIN_INGREDIENT_AMOUNT,
             message=ERROR_MIN_VALUE.format(min_value=MIN_INGREDIENT_AMOUNT)
-        ))
+        ),)
     )
 
     def __str__(self):
@@ -110,7 +110,7 @@ class Recipe(models.Model):
         validators=(MinValueValidator(
             limit_value=MIN_COOKING_TIME,
             message=ERROR_MIN_VALUE.format(min_value=MIN_COOKING_TIME)
-        ))
+        ),)
     )
 
     class Meta:

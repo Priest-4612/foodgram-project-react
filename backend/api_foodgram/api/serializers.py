@@ -1,8 +1,9 @@
 from djoser import serializers as djoser
-from recipes.models import (Follow, Ingredient, IngredientList, Recipe,
-                            RecipeIngredient, RecipeTag, Tag)
 from rest_framework import serializers
-from users.models import User
+
+from recipes.models import (Follow, Ingredient, CountOfIngredient, Recipe,
+                            Tag)  # isort:skip
+from users.models import User  # isort:skip
 
 
 class UserSerializer(djoser.UserSerializer):
@@ -41,14 +42,16 @@ class TagSerializer(serializers.ModelSerializer):
         read_only_fields = ['name', 'color', 'slug']
 
 
-class IngredientListSerializer(serializers.ModelSerializer):
+class IngredientSerializer(serializers.ModelSerializer):
+    measurement_unit = serializers.ReadOnlyField(source='measurement_unit.name')
 
     class Meta:
-        model = IngredientList
+        model = Ingredient
         fields = ['id', 'name', 'measurement_unit']
+        read_only_fields = ['name', 'measurement_unit']
 
 
-class IngredientSerializer(serializers.ModelSerializer):
+class CounyOfIngredientSerializer(serializers.ModelSerializer):
     measurement_unit = serializers.CharField(
         source='ingredient.measurement_unit',
         read_only=True
@@ -59,14 +62,14 @@ class IngredientSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        model = Ingredient
+        model = CountOfIngredient
         fields = ['id', 'name', 'measurement_unit', 'amount']
         read_only_fields = ['name', 'measurement_unit']
 
 
 class RecipeSerializer(serializers.ModelSerializer):
     # tags = TagSerializer(many=True)
-    ingredients = IngredientSerializer(many=True)
+    ingredients = CounyOfIngredientSerializer(many=True)
     author = UserSerializer(
         read_only=True,
         default=serializers.CurrentUserDefault()

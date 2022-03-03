@@ -1,13 +1,14 @@
 from djoser import views as djoser
-from recipes.models import Tag
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from users.models import User
 
-from .serializers import TagSerializer, UserSerializer
+from api.serializers import (IngredientSerializer, TagSerializer,
+                             UserSerializer)  # isort:skip
+from recipes.models import Ingredient, Tag  # isort:skip
+from users.models import User  # isort:skip
 
 
 class UserViewSet(djoser.UserViewSet):
@@ -27,3 +28,10 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
     permission_classes = [AllowAny]
     pagination_class = None
+
+
+class IngredientViewSet(viewsets.ModelViewSet):
+    serializer_class = IngredientSerializer
+    queryset = Ingredient.objects.all()
+    permission_classes = [AllowAny]
+    http_method_names = ('get',)
