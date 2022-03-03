@@ -8,10 +8,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ENV_PATH = os.path.join(os.path.dirname(os.path.dirname(BASE_DIR)), 'infra', '.env')
 load_dotenv(dotenv_path=ENV_PATH)
 
-SECRET_KEY = os.getenv(
-    'APP_KEY',
-    default='6ie35&b0!293=e)$396eatozq_!l$=(y^fcp%izmimz@hsc^z&'
-)
+SECRET_KEY = os.getenv('APP_KEY', default=None)
 
 DEBUG = os.getenv('APP_DEBUG', default=False)
 

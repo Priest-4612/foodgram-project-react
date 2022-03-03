@@ -9,8 +9,14 @@ class Measure(models.Model):
         unique=True
     )
 
+    class Meta:
+        ordering = ['name']
 
-class IngredientList(models.Model):
+    def __str__(self):
+        return f'{self.name}'
+
+
+class Ingredient(models.Model):
     name = models.CharField(
         max_length=256,
         verbose_name='ingredients'
@@ -22,10 +28,16 @@ class IngredientList(models.Model):
         related_name='ingredient_list'
     )
 
+    class Meta:
+        ordering = ['name']
 
-class Ingredient(models.Model):
+    def __str__(self):
+        return f'{self.name}'
+
+
+class CountOfIngredient(models.Model):
     ingredient = models.ForeignKey(
-        to=IngredientList,
+        to=Ingredient,
         on_delete=models.CASCADE,
         related_name='ingredients',
         verbose_name='ingredients',
@@ -33,6 +45,12 @@ class Ingredient(models.Model):
     amount = models.PositiveIntegerField(
         verbose_name='amount'
     )
+
+    def __str__(self):
+        return (
+            f'{self.ingredient.name}: {self.amount}'
+            f'{self.ingredient.measurement_unit.name}'
+        )
 
 
 class Tag(models.Model):
@@ -52,6 +70,9 @@ class Tag(models.Model):
         unique=True
     )
 
+    def __str__(self):
+        return f'{self.name}'
+
 
 class Recipe(models.Model):
     author = models.ForeignKey(
@@ -69,14 +90,17 @@ class Recipe(models.Model):
     )
     description = models.TextField()
     ingredients = models.ManyToManyField(
-        to=Ingredient,
+        to=CountOfIngredient,
         related_name='recipes'
     )
     tags = models.ManyToManyField(
         to=Tag,
         related_name='recipes'
     )
-    cooking_time = models.IntegerField()
+    cooking_time = models.PositiveIntegerField()
+
+    class Meta:
+        ordering = ['-pk']
 
 
 class Follow(models.Model):

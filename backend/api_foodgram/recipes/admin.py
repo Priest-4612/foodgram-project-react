@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import (Favorite, Follow, Ingredient, IngredientList, Measure,
+from .models import (Favorite, Follow, CountOfIngredient, Ingredient, Measure,
                      Recipe, Tag)
 
 
@@ -11,7 +11,7 @@ class MeasureAdmin(admin.ModelAdmin):
     search_fields = ['name']
 
 
-@admin.register(IngredientList)
+@admin.register(Ingredient)
 class IngredientListAdmin(admin.ModelAdmin):
     list_display = ['pk', 'name', 'measurement_unit']
     list_display_links = ['name']
@@ -19,7 +19,7 @@ class IngredientListAdmin(admin.ModelAdmin):
     list_filter = ['name']
 
 
-@admin.register(Ingredient)
+@admin.register(CountOfIngredient)
 class IngredientAdmin(admin.ModelAdmin):
     list_display = ['pk', 'ingredient', 'amount']
     list_display_links = ['ingredient']
