@@ -1,7 +1,7 @@
 from django.contrib import admin
 
-from .models import (Favorite, Follow, CountOfIngredient, Ingredient, Measure,
-                     Recipe, Tag)
+from .models import (CountOfIngredient, Favorite, Ingredient, Measure, Recipe,
+                     Tag)
 
 
 @admin.register(Measure)
@@ -42,13 +42,6 @@ class RecipeAdmin(admin.ModelAdmin):
     list_display_links = ['name']
     search_fields = ['name']
     list_filter = ['name', 'author', 'tags']
-
-
-@admin.register(Follow)
-class FollowAdmin(admin.ModelAdmin):
-    list_display = ['pk', 'user', 'author']
-    search_fields = ['user', 'author']
-    list_filter = ['user', 'author']
 
 
 @admin.register(Favorite)

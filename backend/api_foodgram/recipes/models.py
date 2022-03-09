@@ -117,33 +117,6 @@ class Recipe(models.Model):
         ordering = ['-pk']
 
 
-class Follow(models.Model):
-    user = models.ForeignKey(
-        to=User,
-        related_name='follower',
-        on_delete=models.CASCADE
-    )
-    author = models.ForeignKey(
-        to=User,
-        related_name='followed',
-        on_delete=models.CASCADE
-    )
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=['user', 'author'],
-                name='unique_author_user_following'
-            )
-        ]
-
-    def __str__(self) -> str:
-        return (
-            f'Автор: {self.author} '
-            f'- Подписчик: {self.user}'
-        )
-
-
 class Favorite(models.Model):
     user = models.ForeignKey(
         to=User,

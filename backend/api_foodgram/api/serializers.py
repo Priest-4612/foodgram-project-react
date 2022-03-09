@@ -1,8 +1,8 @@
 from djoser import serializers as djoser
 from rest_framework import serializers
 
-from recipes.models import (Follow, Ingredient, CountOfIngredient, Recipe,
-                            Tag)  # isort:skip
+from recipes.models import (Ingredient, CountOfIngredient,  # isort:skip
+                            Recipe, Tag)
 from users.models import User  # isort:skip
 
 
@@ -16,16 +16,17 @@ class UserSerializer(djoser.UserSerializer):
         ]
         read_only_fields = ['id']
         extra_kwargs = {
-            'password': {'write_only': True}
+            'password': {'write_only': True, 'required': True}
         }
         model = User
 
     def get_is_subscribe(self, obj):
         request = self.context.get('request')
-        if not request or request.user.is_anonymous:
-            return False
         user = request.user
-        return Follow.objects.filter(author=obj, user=user).exists()
+        return (
+            user.is_authenticated
+            and obj.subscribing.filter(subscriber=user).exists()
+        )
 
     def create(self, validated_data):
         user = super(UserSerializer, self).create(validated_data)
@@ -43,7 +44,9 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class IngredientSerializer(serializers.ModelSerializer):
-    measurement_unit = serializers.ReadOnlyField(source='measurement_unit.name')
+    measurement_unit = serializers.ReadOnlyField(
+        source='measurement_unit.name'
+    )
 
     class Meta:
         model = Ingredient
@@ -68,7 +71,6 @@ class CounyOfIngredientSerializer(serializers.ModelSerializer):
 
 
 class RecipeSerializer(serializers.ModelSerializer):
-    # tags = TagSerializer(many=True)
     ingredients = CounyOfIngredientSerializer(many=True)
     author = UserSerializer(
         read_only=True,
@@ -106,3 +108,22 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     def get_is_in_shopping_cart(self, obj):
         return False
+
+
+class RecipeShortSerivalizer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Recipe
+        fields = ['id', 'name', 'image', 'cooking_time']
+        read_only_fields = ['id', 'name', 'image', 'cooking_time']
+
+
+class SubscriptionSerializer(UserSerializer):
+    recipes = RecipeShortSerivalizer(many=True)
+    recipes_count = serializers.SerializerMethodField()
+
+    class Meta:
+        fields = ['recipes', 'recipes_count']
+
+    def get_recipes_count(self, obj):
+        return obj.recipes.count()

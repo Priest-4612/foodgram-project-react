@@ -38,3 +38,32 @@ class User(AbstractUser):
                 self.ERROR_FORBIDDEN_USERNAME.format(username=self.username)
             )
         super().save(*args, **kwargs)
+
+
+class Subscribe(models.Model):
+    subscriber = models.ForeignKey(
+        to=User,
+        on_delete=models.CASCADE,
+        related_name='subscriber',
+        verbose_name='subscriber'
+    )
+    author = models.ForeignKey(
+        to=User,
+        on_delete=models.CASCADE,
+        related_name='subscribing',
+        verbose_name='author'
+    )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['subscriber', 'author'],
+                name='unique_author_user_following'
+            )
+        ]
+
+    def __str__(self) -> str:
+        return (
+            f'Автор: {self.author} '
+            f'- Подписчик: {self.subscriber}'
+        )
