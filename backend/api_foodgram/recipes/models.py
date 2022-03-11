@@ -86,7 +86,7 @@ class Tag(models.Model):
 class Recipe(models.Model):
     author = models.ForeignKey(
         to=User,
-        related_name='recipies',
+        related_name='recipes',
         verbose_name='author',
         on_delete=models.CASCADE,
     )
@@ -95,7 +95,7 @@ class Recipe(models.Model):
         verbose_name='recipes'
     )
     image = models.ImageField(
-        upload_to='recipies/',
+        upload_to='recipes/',
     )
     description = models.TextField()
     ingredients = models.ManyToManyField(

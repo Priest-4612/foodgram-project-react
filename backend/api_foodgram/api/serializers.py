@@ -22,10 +22,10 @@ class UserSerializer(djoser.UserSerializer):
 
     def get_is_subscribe(self, obj):
         request = self.context.get('request')
-        user = request.user
         return (
-            user.is_authenticated
-            and obj.subscribing.filter(subscriber=user).exists()
+            request
+            and request.user.is_authenticated
+            and obj.subscribing.filter(subscriber=request.user).exists()
         )
 
     def create(self, validated_data):
@@ -110,7 +110,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         return False
 
 
-class RecipeShortSerivalizer(serializers.ModelSerializer):
+class SubscriptionRecipeSerivalizer(serializers.ModelSerializer):
 
     class Meta:
         model = Recipe
@@ -119,11 +119,11 @@ class RecipeShortSerivalizer(serializers.ModelSerializer):
 
 
 class SubscriptionSerializer(UserSerializer):
-    recipes = RecipeShortSerivalizer(many=True)
+    recipes = SubscriptionRecipeSerivalizer(many=True)
     recipes_count = serializers.SerializerMethodField()
 
-    class Meta:
-        fields = ['recipes', 'recipes_count']
+    class Meta(UserSerializer.Meta):
+        fields = UserSerializer.Meta.fields + ['recipes', 'recipes_count']
 
     def get_recipes_count(self, obj):
         return obj.recipes.count()
