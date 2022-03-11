@@ -22,11 +22,11 @@ class UserViewSet(djoser.UserViewSet):
         serializer = UserSerializer(user)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
-    @action(detail=False, method=['get'])
+    @action(detail=False, methods=['get'])
     def subscriptions(self, request):
         pass
 
-    @action(detail=True, method=['get', 'delete'])
+    @action(detail=True, methods=['get', 'delete'])
     def subscribe(self, request, id):
         pass
 
