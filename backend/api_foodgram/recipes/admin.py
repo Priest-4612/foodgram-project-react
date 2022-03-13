@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import (CountOfIngredient, Favorite, Ingredient, Measure, Recipe,
+from .models import (Favorite, Ingredient, Measure, Recipe, RecipeIngredient,
                      Tag)
 
 
@@ -19,9 +19,9 @@ class IngredientListAdmin(admin.ModelAdmin):
     list_filter = ['name']
 
 
-@admin.register(CountOfIngredient)
+@admin.register(RecipeIngredient)
 class IngredientAdmin(admin.ModelAdmin):
-    list_display = ['pk', 'ingredient', 'amount']
+    list_display = ['pk', 'recipe', 'ingredient', 'amount']
     list_display_links = ['ingredient']
     search_fields = ['ingredient']
     list_filter = ['ingredient']
@@ -37,7 +37,7 @@ class TagAdmin(admin.ModelAdmin):
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
-    list_display = ['author', 'name', 'image', 'description',
+    list_display = ['author', 'name', 'image', 'text',
                     'cooking_time']
     list_display_links = ['name']
     search_fields = ['name']

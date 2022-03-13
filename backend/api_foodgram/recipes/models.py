@@ -7,6 +7,30 @@ MIN_COOKING_TIME = 1
 MIN_INGREDIENT_AMOUNT = 1
 
 
+class Tag(models.Model):
+    name = models.CharField(
+        max_length=200,
+        verbose_name='tags',
+        unique=True
+    )
+    color = models.CharField(
+        max_length=7,
+        verbose_name='Hex codes',
+        unique=True
+    )
+    slug = models.SlugField(
+        max_length=200,
+        verbose_name='slugs',
+        unique=True
+    )
+
+    class Meta:
+        ordering = ['pk']
+
+    def __str__(self):
+        return f'{self.name}'
+
+
 class Measure(models.Model):
     name = models.CharField(
         max_length=32,
@@ -40,55 +64,11 @@ class Ingredient(models.Model):
         return f'{self.name}'
 
 
-class CountOfIngredient(models.Model):
-    ingredient = models.ForeignKey(
-        to=Ingredient,
-        on_delete=models.CASCADE,
-        related_name='ingredients',
-        verbose_name='ingredients',
-    )
-    amount = models.PositiveIntegerField(
-        verbose_name='amount',
-        validators=(MinValueValidator(
-            limit_value=MIN_INGREDIENT_AMOUNT,
-            message=ERROR_MIN_VALUE.format(min_value=MIN_INGREDIENT_AMOUNT)
-        ),)
-    )
-
-    def __str__(self):
-        return (
-            f'{self.ingredient.name}: {self.amount}'
-            f'{self.ingredient.measurement_unit.name}'
-        )
-
-
-class Tag(models.Model):
-    name = models.CharField(
-        max_length=200,
-        verbose_name='tags',
-        unique=True
-    )
-    color = models.CharField(
-        max_length=7,
-        verbose_name='Hex codes',
-        unique=True
-    )
-    slug = models.SlugField(
-        max_length=200,
-        verbose_name='slugs',
-        unique=True
-    )
-
-    def __str__(self):
-        return f'{self.name}'
-
-
 class Recipe(models.Model):
     author = models.ForeignKey(
         to=User,
-        related_name='recipes',
-        verbose_name='author',
         on_delete=models.CASCADE,
+        related_name='recipes'
     )
     name = models.CharField(
         max_length=256,
@@ -97,9 +77,10 @@ class Recipe(models.Model):
     image = models.ImageField(
         upload_to='recipes/',
     )
-    description = models.TextField()
+    text = models.TextField()
     ingredients = models.ManyToManyField(
-        to=CountOfIngredient,
+        to=Ingredient,
+        through='RecipeIngredient',
         related_name='recipes'
     )
     tags = models.ManyToManyField(
@@ -112,9 +93,51 @@ class Recipe(models.Model):
             message=ERROR_MIN_VALUE.format(min_value=MIN_COOKING_TIME)
         ),)
     )
+    pub_date = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Дата публикации'
+    )
+
+    class Meta:
+        ordering = ['-pub_date']
+
+    def __str__(self):
+        return self.name
+
+
+class RecipeIngredient(models.Model):
+    recipe = models.ForeignKey(
+        to=Recipe,
+        on_delete=models.CASCADE,
+        related_name='recipe_ingredient'
+    )
+    ingredient = models.ForeignKey(
+        to=Ingredient,
+        on_delete=models.CASCADE,
+        related_name='recipe_ingredient',
+    )
+    amount = models.PositiveIntegerField(
+        verbose_name='amount',
+        validators=(MinValueValidator(
+            limit_value=MIN_INGREDIENT_AMOUNT,
+            message=ERROR_MIN_VALUE.format(min_value=MIN_INGREDIENT_AMOUNT)
+        ),)
+    )
 
     class Meta:
         ordering = ['-pk']
+        constraints = [
+            models.UniqueConstraint(
+                name='unique_ingredient_for_recipe',
+                fields=('recipe', 'ingredient',),
+            )
+        ]
+
+    def __str__(self):
+        return (
+            f'{self.ingredient.name}: {self.amount}'
+            f'{self.ingredient.measurement_unit.name}'
+        )
 
 
 class Favorite(models.Model):

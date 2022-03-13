@@ -130,3 +130,10 @@ dmypy.json
 
 # .idea
 .idea
+
+# Хранилище статичных файлов
+/yatube/static/*
+!/yatube/static/.gitkeep
+
+/yatube/media/*
+!/yatube/media/.gitkeep
