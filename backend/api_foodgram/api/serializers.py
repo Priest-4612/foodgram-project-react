@@ -1,9 +1,14 @@
 from djoser import serializers as djoser
 from rest_framework import serializers
+from rest_framework.validators import UniqueTogetherValidator
 
 from recipes.models import (Ingredient, CountOfIngredient,  # isort:skip
                             Recipe, Tag)
-from users.models import User  # isort:skip
+from users.models import Subscribe, User  # isort:skip
+
+
+ERROR_SUBSCRIBE_TO_YOURSELF = 'Вы не можете подписаться на себя'
+ERROR_CANNOT_SUBSCRIBE_TWICE = 'Нельзя дважды подписаться.'
 
 
 class UserSerializer(djoser.UserSerializer):
@@ -87,21 +92,21 @@ class RecipeSerializer(serializers.ModelSerializer):
         read_only_fields = ['id']
         depth = 1
 
-    def create(self, validated_data):
-        tags = validated_data.pop('tags')
-        ingredients = validated_data.pop('ingredients')
-        recipe = Recipe.objects.create(**validated_data)
+    # def create(self, validated_data):
+    #     tags = validated_data.pop('tags')
+    #     ingredients = validated_data.pop('ingredients')
+    #     recipe = Recipe.objects.create(**validated_data)
 
-        for tag in tags:
-            current_tag = Tag.objects.get(**tag)
-            RecipeTag.objects.create(recipe=recipe, tag=current_tag)
+    #     for tag in tags:
+    #         current_tag = Tag.objects.get(**tag)
+    #         RecipeTag.objects.create(recipe=recipe, tag=current_tag)
 
-        for ingredient in ingredients:
-            current_ingredient = Ingredient.objects.get_or_create(**ingredient)
-            RecipeIngredient.objects.create(recipe=recipe,
-                                            tag=current_ingredient)
+    #     for ingredient in ingredients:
+    #         current_ingredient = Ingredient.objects.get_or_create(**ingredient)
+    #         RecipeIngredient.objects.create(recipe=recipe,
+    #                                         tag=current_ingredient)
 
-        return recipe
+    #     return recipe
 
     def get_is_favorited(self, obj):
         return False
@@ -127,3 +132,28 @@ class SubscriptionSerializer(UserSerializer):
 
     def get_recipes_count(self, obj):
         return obj.recipes.count()
+
+
+class SubscriberSerializer(serializers.ModelSerializer):
+    subscriber = serializers.HiddenField(
+        default=serializers.CurrentUserDefault()
+    )
+
+    class Meta:
+        model = Subscribe
+        fields = ['subscriber', 'author']
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Subscribe.objects.all(),
+                fields=['subscriber', 'author'],
+                message=ERROR_CANNOT_SUBSCRIBE_TWICE
+            )
+        ]
+
+    def validate_author(self, value):
+        request = self.context.get('request')
+        if not request.user == value:
+            return value
+        raise serializers.ValidationError(
+            ERROR_SUBSCRIBE_TO_YOURSELF
+        )

@@ -58,7 +58,11 @@ class Subscribe(models.Model):
         constraints = [
             models.UniqueConstraint(
                 fields=['subscriber', 'author'],
-                name='unique_author_user_following'
+                name='unique_author_user_subscriber'
+            ),
+            models.CheckConstraint(
+                check=~models.Q(subscriber=models.F('author')),
+                name='prevent_self_author'
             )
         ]
 

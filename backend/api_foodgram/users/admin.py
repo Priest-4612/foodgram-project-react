@@ -12,6 +12,7 @@ class UserAdmin(admin.ModelAdmin):
 
 @admin.register(Subscribe)
 class SubscribeAdmin(admin.ModelAdmin):
+
     list_display = ['pk', 'subscriber', 'author']
-    search_fields = ['subscriber', 'author']
+    search_fields = ['subscriber__email', 'author__email']
     list_filter = ['subscriber', 'author']
