@@ -44,12 +44,12 @@ class UserViewSet(djoser.UserViewSet):
             serializer.save()
             serializer = SubscriptionSerializer(author)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        instance = get_object_or_404(
+        subscription = get_object_or_404(
             Subscribe,
             subscriber=subscriber,
             author=author
         )
-        instance.delete()
+        subscription.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
