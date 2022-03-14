@@ -138,5 +138,5 @@ dmypy.json
 /backend/api_foodgram/media/*
 !/backend/api_foodgram/media/.gitkeep
 
-/data/*
-!/data/.gitkeep
+# /data/*
+# !/data/.gitkeep
