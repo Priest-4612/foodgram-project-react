@@ -3,9 +3,11 @@ from djoser import views as djoser
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import (IsAuthenticated,
+                                        IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
 
+from api.permissions import IsOwnerOrAdmin  # isort:skip
 from api.serializers import (  # isort:skip
     FavoriteSerializer, IngredientSerializer, RecipeSerializer,
     ShortRecipeSerivalizer, SubscriptionSerializer, SubscriberSerializer,
@@ -57,23 +59,35 @@ class UserViewSet(djoser.UserViewSet):
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = TagSerializer
     queryset = Tag.objects.all()
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticatedOrReadOnly]
     pagination_class = None
 
 
-class IngredientViewSet(viewsets.ModelViewSet):
+class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = IngredientSerializer
     queryset = Ingredient.objects.all()
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticatedOrReadOnly]
     pagination_class = None
     http_method_names = ['get']
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
     serializer_class = RecipeSerializer
-    queryset = Recipe.objects.all()
-    # permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrAdmin]
     pagination_class = PageNumberPagination
+
+    def get_queryset(self):
+        queryset = Recipe.objects.all()
+        is_favorited = self.request.query_params.get('is_favorited')
+        is_in_shopping_cart = self.request.query_params.get(
+            'is_in_shopping_cart'
+        )
+        if is_favorited == 'true':
+            favorite = Favorite.objects.filter(user=self.request.user.id)
+            queryset = queryset.filter(is_favorited__in=favorite)
+        if is_in_shopping_cart == 'true':
+            pass
+        return queryset.all().order_by('-id')
 
     @action(
         detail=True,
