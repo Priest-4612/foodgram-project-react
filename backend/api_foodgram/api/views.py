@@ -3,14 +3,15 @@ from djoser import views as djoser
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
 from api.serializers import (  # isort:skip
-    IngredientSerializer, RecipeSerializer,
-    SubscriptionSerializer, SubscriberSerializer, TagSerializer, UserSerializer
+    FavoriteSerializer, IngredientSerializer, RecipeSerializer,
+    ShortRecipeSerivalizer, SubscriptionSerializer, SubscriberSerializer,
+    TagSerializer, UserSerializer
 )
-from recipes.models import Ingredient, Recipe, Tag  # isort:skip
+from recipes.models import Favorite, Ingredient, Recipe, Tag  # isort:skip
 from users.models import Subscribe, User  # isort:skip
 
 
@@ -71,5 +72,30 @@ class IngredientViewSet(viewsets.ModelViewSet):
 class RecipeViewSet(viewsets.ModelViewSet):
     serializer_class = RecipeSerializer
     queryset = Recipe.objects.all()
-    permission_classes = [AllowAny]
+    # permission_classes = [AllowAny]
     pagination_class = PageNumberPagination
+
+    @action(
+        detail=True,
+        methods=['post', 'delete'],
+        permission_classes=[IsAuthenticated]
+    )
+    def favorite(self, request, pk=None):
+        user = request.user
+        recipe = get_object_or_404(Recipe, pk=pk)
+        if request.method == 'POST':
+            serializer = FavoriteSerializer(
+                data={'recipe': recipe.id},
+                context={'request': request}
+            )
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            serializer = ShortRecipeSerivalizer(recipe)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        favorite = get_object_or_404(
+            Favorite,
+            user=user,
+            recipe=recipe
+        )
+        favorite.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

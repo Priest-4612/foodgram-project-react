@@ -4,8 +4,8 @@ from rest_framework import serializers
 from rest_framework.generics import get_object_or_404
 from rest_framework.validators import UniqueTogetherValidator
 
-from recipes.models import (Ingredient, Measure, Recipe,  # isort:skip
-                            RecipeIngredient, Tag)
+from recipes.models import (Favorite, Ingredient, Measure,  # isort:skip
+                            Recipe, RecipeIngredient, Tag)
 from users.models import Subscribe, User  # isort:skip
 
 
@@ -20,6 +20,7 @@ ERROR_UNIQUE_INGREDIENTS = (
 )
 ERROR_NO_TAG = 'Необходимо указать хоть бы один тег.'
 ERROR_NOT_INT_TAG = 'Необходимо указать число соответствующее ID тега.'
+ERROR_CANNOT_FAVORITED_TWICE = 'Нельзя добвить в избраное дважды.'
 
 
 class UserSerializer(djoser.UserSerializer):
@@ -223,7 +224,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         return instance
 
 
-class SubscriptionRecipeSerivalizer(serializers.ModelSerializer):
+class ShortRecipeSerivalizer(serializers.ModelSerializer):
 
     class Meta:
         model = Recipe
@@ -232,7 +233,7 @@ class SubscriptionRecipeSerivalizer(serializers.ModelSerializer):
 
 
 class SubscriptionSerializer(UserSerializer):
-    recipes = SubscriptionRecipeSerivalizer(many=True)
+    recipes = ShortRecipeSerivalizer(many=True)
     recipes_count = serializers.SerializerMethodField()
 
     class Meta(UserSerializer.Meta):
@@ -265,3 +266,20 @@ class SubscriberSerializer(serializers.ModelSerializer):
         raise serializers.ValidationError(
             ERROR_SUBSCRIBE_TO_YOURSELF
         )
+
+
+class FavoriteSerializer(serializers.ModelSerializer):
+    user = serializers.HiddenField(
+        default=serializers.CurrentUserDefault()
+    )
+
+    class Meta:
+        model = Favorite
+        fields = ['user', 'recipe']
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Favorite.objects.all(),
+                fields=['user', 'recipe'],
+                message=ERROR_CANNOT_FAVORITED_TWICE
+            )
+        ]
