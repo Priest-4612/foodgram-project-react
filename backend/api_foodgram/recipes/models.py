@@ -149,11 +149,17 @@ class Favorite(models.Model):
     recipe = models.ForeignKey(
         to=Recipe,
         on_delete=models.CASCADE,
-        related_name='favorites'
+        related_name='is_favorited'
     )
 
     class Meta:
+        ordering = ['-pk']
         models.UniqueConstraint(
             fields=['user', 'recipe'],
             name='unique_recipe_user_favorite'
         )
+
+    def __str__(self):
+        return (
+            f'Пользователь: {self.user.username} - '
+            f'Рецепт в избранном {self.recipe.name}')

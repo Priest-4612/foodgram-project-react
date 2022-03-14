@@ -132,8 +132,8 @@ dmypy.json
 .idea
 
 # Хранилище статичных файлов
-/yatube/static/*
-!/yatube/static/.gitkeep
+/backend/api_foodgram/static/*
+!/backend/api_foodgram/.gitkeep
 
-/yatube/media/*
-!/yatube/media/.gitkeep
+/backend/api_foodgram/media/*
+!/backend/api_foodgram/media/.gitkeep

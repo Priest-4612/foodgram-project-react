@@ -4,7 +4,7 @@ from rest_framework import serializers
 from rest_framework.generics import get_object_or_404
 from rest_framework.validators import UniqueTogetherValidator
 
-from recipes.models import (Ingredient, Recipe,  # isort:skip
+from recipes.models import (Ingredient, Measure, Recipe,  # isort:skip
                             RecipeIngredient, Tag)
 from users.models import Subscribe, User  # isort:skip
 
@@ -18,6 +18,8 @@ ERROR_UNIQUE_INGREDIENTS = (
     'Проверьте, что не добавляете в рецепт один и тот же '
     'ингредиент дважды.'
 )
+ERROR_NO_TAG = 'Необходимо указать хоть бы один тег.'
+ERROR_NOT_INT_TAG = 'Необходимо указать число соответствующее ID тега.'
 
 
 class UserSerializer(djoser.UserSerializer):
@@ -56,6 +58,35 @@ class TagSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'color', 'slug']
         read_only_fields = ['name', 'color', 'slug']
 
+    def to_representation(self, instance):
+        return {
+            'id': instance.id,
+            'name': instance.name,
+            'color': instance.color,
+            'slug': instance.slug
+        }
+
+    def to_internal_value(self, data):
+        if not data:
+            raise serializers.ValidationError({
+                'tags': ERROR_NO_TAG
+            })
+        if not isinstance(data, int):
+            raise serializers.ValidationError({
+                'tags': ERROR_NOT_INT_TAG
+            })
+        return get_object_or_404(Tag, id=data)
+
+
+class MeasureSerializer(serializers.ModelSerializer):
+    measurement_unit = serializers.ReadOnlyField(
+        source='measures.name'
+    )
+
+    class Meta:
+        model = Measure
+        exclude = ['id']
+
 
 class IngredientSerializer(serializers.ModelSerializer):
     measurement_unit = serializers.ReadOnlyField(
@@ -69,9 +100,10 @@ class IngredientSerializer(serializers.ModelSerializer):
 
 
 class RecipeIngredientSerializer(serializers.ModelSerializer):
-    measurement_unit = serializers.CharField(
-        source='ingredient.measurement_unit',
-        read_only=True
+    id = serializers.IntegerField(source='ingredient.id')
+    name = serializers.ReadOnlyField(source='ingredient.name')
+    measurement_unit = serializers.ReadOnlyField(
+        source='ingredient.measurement_unit.name'
     )
     name = serializers.CharField(
         source='ingredient.name',
@@ -81,18 +113,16 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
     class Meta:
         model = RecipeIngredient
         fields = ['id', 'name', 'measurement_unit', 'amount']
-        read_only_fields = ['name', 'measurement_unit']
-        depth = 1
 
 
 class RecipeSerializer(serializers.ModelSerializer):
-    ingredients = RecipeIngredientSerializer(
-        # source='recipe_ingredient',
-        many=True
-    )
     author = UserSerializer(
         read_only=True,
         default=serializers.CurrentUserDefault()
+    )
+    tags = TagSerializer(required=True, many=True)
+    ingredients = RecipeIngredientSerializer(
+        source='recipe_ingredient', many=True
     )
     image = Base64ImageField(max_length=None, use_url=True)
     is_favorited = serializers.SerializerMethodField()
@@ -100,20 +130,25 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Recipe
-        fields = ['id', 'tags', 'author', 'ingredients', 'is_favorited',
-                  'is_in_shopping_cart', 'name', 'image', 'text',
-                  'cooking_time']
-        read_only_fields = ['id']
-        # depth = 1
+        exclude = ['pub_date']
 
     def get_is_favorited(self, obj):
+        request = self.context.get('request')
+        return (
+            request
+            and request.user.is_authenticated
+            and obj.is_favorited.filter(user=request.user).exists()
+        )
         return False
 
     def get_is_in_shopping_cart(self, obj):
         return False
 
     def validate(self, data):
-        ingredients_data = data.get('ingredients')
+        tags_data = data.get('tags')
+        if len(tags_data) == 0:
+            raise serializers.ValidationError(ERROR_NO_TAG)
+        ingredients_data = data.get('recipe_ingredient')
         all_ingredients_ids = []
 
         for item in ingredients_data:
@@ -132,7 +167,7 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         author = self.context.get('request').user
-        ingredients = validated_data.pop('ingredients')
+        ingredients = validated_data.pop('recipe_ingredient')
         tags = validated_data.pop('tags')
         image = validated_data.pop('image')
 
@@ -158,7 +193,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         return recipe
 
     def update(self, instance, validated_data):
-        ingredients = validated_data.get('ingredients')
+        ingredients = validated_data.get('recipe_ingredient')
         tags_data = validated_data.get('tags')
 
         if validated_data.get('image'):
