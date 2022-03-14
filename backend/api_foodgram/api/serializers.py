@@ -5,7 +5,7 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.validators import UniqueTogetherValidator
 
 from recipes.models import (Favorite, Ingredient, Measure,  # isort:skip
-                            Recipe, RecipeIngredient, Tag)
+                            Recipe, RecipeIngredient, ShoppingCart, Tag)
 from users.models import Subscribe, User  # isort:skip
 
 
@@ -20,7 +20,7 @@ ERROR_UNIQUE_INGREDIENTS = (
 )
 ERROR_NO_TAG = 'Необходимо указать хоть бы один тег.'
 ERROR_NOT_INT_TAG = 'Необходимо указать число соответствующее ID тега.'
-ERROR_CANNOT_FAVORITED_TWICE = 'Нельзя добвить в избраное дважды.'
+ERROR_CANNOT_ADD_TWICE = 'Нельзя добвить дважды.'
 
 
 class UserSerializer(djoser.UserSerializer):
@@ -140,10 +140,14 @@ class RecipeSerializer(serializers.ModelSerializer):
             and request.user.is_authenticated
             and obj.is_favorited.filter(user=request.user).exists()
         )
-        return False
 
     def get_is_in_shopping_cart(self, obj):
-        return False
+        request = self.context.get('request')
+        return (
+            request
+            and request.user.is_authenticated
+            and obj.buy.filter(user=request.user).exists()
+        )
 
     def validate(self, data):
         tags_data = data.get('tags')
@@ -280,6 +284,23 @@ class FavoriteSerializer(serializers.ModelSerializer):
             UniqueTogetherValidator(
                 queryset=Favorite.objects.all(),
                 fields=['user', 'recipe'],
-                message=ERROR_CANNOT_FAVORITED_TWICE
+                message=ERROR_CANNOT_ADD_TWICE
+            )
+        ]
+
+
+class ShoppingCardSerializer(serializers.ModelSerializer):
+    user = serializers.HiddenField(
+        default=serializers.CurrentUserDefault()
+    )
+
+    class Meta:
+        model = ShoppingCart
+        fields = ['user', 'recipe']
+        validators = [
+            UniqueTogetherValidator(
+                queryset=ShoppingCart.objects.all(),
+                fields=['user', 'recipe'],
+                message=ERROR_CANNOT_ADD_TWICE
             )
         ]
