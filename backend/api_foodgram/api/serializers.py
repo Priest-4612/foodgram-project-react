@@ -59,25 +59,6 @@ class TagSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'color', 'slug']
         read_only_fields = ['name', 'color', 'slug']
 
-    def to_representation(self, instance):
-        return {
-            'id': instance.id,
-            'name': instance.name,
-            'color': instance.color,
-            'slug': instance.slug
-        }
-
-    def to_internal_value(self, data):
-        if not data:
-            raise serializers.ValidationError({
-                'tags': ERROR_NO_TAG
-            })
-        if not isinstance(data, int):
-            raise serializers.ValidationError({
-                'tags': ERROR_NOT_INT_TAG
-            })
-        return get_object_or_404(Tag, id=data)
-
 
 class MeasureSerializer(serializers.ModelSerializer):
     measurement_unit = serializers.ReadOnlyField(
@@ -121,7 +102,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         read_only=True,
         default=serializers.CurrentUserDefault()
     )
-    tags = TagSerializer(required=True, many=True)
+    tags = TagSerializer(read_only=True, many=True)
     ingredients = RecipeIngredientSerializer(
         source='recipe_ingredient', many=True
     )
@@ -150,7 +131,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         )
 
     def validate(self, data):
-        tags_data = data.get('tags')
+        tags_data = self.initial_data.get('tags')
         if len(tags_data) == 0:
             raise serializers.ValidationError(ERROR_NO_TAG)
         ingredients_data = data.get('recipe_ingredient')
@@ -173,7 +154,7 @@ class RecipeSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         author = self.context.get('request').user
         ingredients = validated_data.pop('recipe_ingredient')
-        tags = validated_data.pop('tags')
+        tags = self.initial_data.get('tags')
         image = validated_data.pop('image')
 
         recipe = Recipe.objects.create(
