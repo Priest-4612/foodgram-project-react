@@ -1,5 +1,4 @@
 from django_filters import rest_framework as filters
-from django_filters import widgets
 from rest_framework.filters import SearchFilter
 
 from recipes.models import Recipe  # isort:skip
