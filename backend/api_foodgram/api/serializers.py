@@ -127,7 +127,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         return (
             request
             and request.user.is_authenticated
-            and obj.buy.filter(user=request.user).exists()
+            and obj.is_in_shopping_cart.filter(user=request.user).exists()
         )
 
     def validate(self, data):
@@ -152,19 +152,14 @@ class RecipeSerializer(serializers.ModelSerializer):
         return data
 
     def create(self, validated_data):
-        author = self.context.get('request').user
         ingredients = validated_data.pop('recipe_ingredient')
         tags = self.initial_data.get('tags')
-        image = validated_data.pop('image')
-
         recipe = Recipe.objects.create(
-            author=author,
-            image=image,
+            author=self.context.get('request').user,
+            image=validated_data.pop('image'),
             **validated_data
         )
-
         recipe.tags.set(tags)
-
         set_of_ingredients = [
             RecipeIngredient(
                 recipe=recipe,
@@ -181,19 +176,16 @@ class RecipeSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         ingredients = validated_data.get('recipe_ingredient')
         tags_data = self.initial_data.get('tags')
-
         if validated_data.get('image'):
             image = validated_data.pop('image')
             instance.image = image
             instance.save()
-
         instance.name = validated_data.get('name')
         instance.text = validated_data.get('text')
         instance.cooking_time = validated_data.get('cooking_time')
         instance.tags.clear()
         instance.tags.set(tags_data)
         instance.ingredients.clear()
-
         set_of_ingredients = [
             RecipeIngredient(
                 recipe=instance,

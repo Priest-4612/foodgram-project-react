@@ -74,32 +74,17 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly]
     pagination_class = None
     http_method_names = ['get']
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = IngredientFilter
+    filter_backends = [IngredientFilter]
+    search_fields = ['^name']
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
     serializer_class = RecipeSerializer
+    queryset = Recipe.objects.all().order_by('-id')
     permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrAdmin]
     pagination_class = PageNumberPagination
     filter_backends = [DjangoFilterBackend]
     filterset_class = RecipeFilter
-
-    def get_queryset(self):
-        queryset = Recipe.objects.all()
-        is_favorited = self.request.query_params.get('is_favorited')
-        is_in_shopping_cart = self.request.query_params.get(
-            'is_in_shopping_cart'
-        )
-        if is_favorited == 'true':
-            favorite = Favorite.objects.filter(user=self.request.user.id)
-            queryset = queryset.filter(is_favorited__in=favorite)
-        if is_in_shopping_cart == 'true':
-            shopping_cart = ShoppingCart.objects.filter(
-                user=self.request.user.id
-            )
-            queryset = queryset.filter(buy__in=shopping_cart)
-        return queryset.all().order_by('-id')
 
     @action(
         detail=True,

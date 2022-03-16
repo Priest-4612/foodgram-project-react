@@ -1,26 +1,29 @@
-import django_filters as filters
+from django_filters import rest_framework as filters
+from django_filters import widgets
+from rest_framework.filters import SearchFilter
 
-from recipes.models import Ingredient, Recipe, Tag  # isort:skip
+from recipes.models import Recipe  # isort:skip
 
 
 class RecipeFilter(filters.FilterSet):
+    author = filters.AllValuesMultipleFilter(
+        field_name='author__id'
+    )
     tags = filters.AllValuesMultipleFilter(
-        to_field_name='slug',
-        field_name='tags__slug',
-        queryset=Tag.objects.all(),
+        field_name='tags__slug'
+    )
+    is_favorited = filters.BooleanFilter(
+        widget=widgets.BooleanWidget()
+    )
+    is_in_shopping_cart = filters.BooleanFilter(
+        widget=widgets.BooleanWidget()
     )
 
     class Meta:
         model = Recipe
-        fields = ['author', 'tags']
+        fields = ["author__id", "tags__slug",
+                  "is_favorited", "is_in_shopping_cart"]
 
 
-class IngredientFilter(filters.FilterSet):
-    name = filters.CharFilter(field_name='name', method='starts_with')
-
-    class Meta:
-        model = Ingredient
-        fields = ['name']
-
-    def starts_with(self, queryset, slug, name):
-        return queryset.filter(name__startswith=name)
+class IngredientFilter(SearchFilter):
+    search_param = 'name'
