@@ -180,7 +180,7 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         ingredients = validated_data.get('recipe_ingredient')
-        tags_data = validated_data.get('tags')
+        tags_data = self.initial_data.get('tags')
 
         if validated_data.get('image'):
             image = validated_data.pop('image')
