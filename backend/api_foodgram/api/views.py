@@ -1,6 +1,6 @@
+from django.db.models import Sum
 from django.http.response import HttpResponse
 from django.shortcuts import get_object_or_404
-from django_filters.rest_framework import DjangoFilterBackend
 from djoser import views as djoser
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
@@ -83,44 +83,13 @@ class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all().order_by('-id')
     permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrAdmin]
     pagination_class = PageNumberPagination
-    filter_backends = [DjangoFilterBackend]
     filterset_class = RecipeFilter
 
-    @action(
-        detail=True,
-        methods=['post', 'delete'],
-        permission_classes=[IsAuthenticated]
-    )
-    def favorite(self, request, pk=None):
+    def item_add_or_delete(self, request, serializer, model, pk):
         user = request.user
         recipe = get_object_or_404(Recipe, pk=pk)
         if request.method == 'POST':
-            serializer = FavoriteSerializer(
-                data={'recipe': recipe.id},
-                context={'request': request}
-            )
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            serializer = ShortRecipeSerivalizer(recipe)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        favorite = get_object_or_404(
-            Favorite,
-            user=user,
-            recipe=recipe
-        )
-        favorite.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-    @action(
-        detail=True,
-        methods=['post', 'delete'],
-        permission_classes=[IsAuthenticated]
-    )
-    def shopping_cart(self, request, pk=None):
-        user = request.user
-        recipe = get_object_or_404(Recipe, pk=pk)
-        if request.method == 'POST':
-            serializer = ShoppingCardSerializer(
+            serializer = serializer(
                 data={'recipe': recipe.id},
                 context={'request': request}
             )
@@ -129,7 +98,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             serializer = ShortRecipeSerivalizer(recipe)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         item = get_object_or_404(
-            ShoppingCart,
+            model,
             user=user,
             recipe=recipe
         )
@@ -137,32 +106,53 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(
+        detail=True,
+        methods=['post', 'delete'],
+        permission_classes=[IsAuthenticated]
+    )
+    def favorite(self, request, pk=None):
+        return self.item_add_or_delete(
+            request=request,
+            serializer=FavoriteSerializer,
+            model=Favorite,
+            pk=pk
+        )
+
+    @action(
+        detail=True,
+        methods=['post', 'delete'],
+        permission_classes=[IsAuthenticated]
+    )
+    def shopping_cart(self, request, pk=None):
+        return self.item_add_or_delete(
+            request=request,
+            serializer=ShoppingCardSerializer,
+            model=ShoppingCart,
+            pk=pk
+        )
+
+    @action(
         detail=False,
         methods=['get'],
         permission_classes=(IsAuthenticated,),
     )
     def download_shopping_cart(self, request):
-        shopping_list_data = RecipeIngredient.objects.filter(
-            recipe__buy__user=request.user
+        shopping_list = RecipeIngredient.objects.filter(
+            recipe__is_in_shopping_cart__user=request.user
+        ).values(
+            'ingredient__name',
+            'ingredient__measurement_unit__name'
+        ).order_by(
+            "ingredient__name"
+        ).annotate(
+            Sum('amount')
         )
-        shopping_list = {}
-        for item in shopping_list_data:
-            name = item.ingredient.name
-            measurement_unit = item.ingredient.measurement_unit
-            amount = item.amount
-            if name not in shopping_list:
-                shopping_list[name] = {
-                    'measurement_unit': measurement_unit,
-                    'amount': amount
-                }
-            else:
-                shopping_list[name]['amount'] += amount
-
         content = ['Список ингредиентов для выбранных рецептов:\n\n', ]
-        for item in shopping_list:
+        for index, item in enumerate(shopping_list):
             content.append(
-                f"{item}({shopping_list[item]['measurement_unit']}) - "
-                f"{shopping_list[item]['amount']}\n"
+                f'{index + 1}. {item["ingredient__name"]} ('
+                f'{item["ingredient__measurement_unit__name"]}) - '
+                f'{item["amount__sum"]}\n'
             )
         response = HttpResponse(content, content_type='text/plain')
         response['Content-Disposition'] = (

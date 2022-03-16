@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from users.models import Subscribe, User
+from users.models import Subscribe, User  # isort:skip
 
 
 @admin.register(User)

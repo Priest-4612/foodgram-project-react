@@ -13,7 +13,7 @@ class RecipeFilter(filters.FilterSet):
         field_name='tags__slug'
     )
     is_favorited = filters.BooleanFilter(
-        widget=widgets.BooleanWidget()
+        method='get_is_favorited'
     )
     is_in_shopping_cart = filters.BooleanFilter(
         widget=widgets.BooleanWidget()
