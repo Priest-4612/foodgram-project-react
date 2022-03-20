@@ -1,11 +1,11 @@
 django==2.2.16
+django-filter==2.4.0
 djangorestframework==3.12.4
+djangorestframework-simplejwt==4.8.0
+gunicorn==20.0.4
+psycopg2-binary==2.8.6
 djoser==2.1.0
 requests==2.26.0
-djangorestframework-simplejwt==4.8.0
 python-dotenv==0.13.0
 pillow
-psycopg2-binary==2.8.6
-gunicorn==20.0.4
-django-filter==2.4.0
 drf_extra_fields==3.4.0
