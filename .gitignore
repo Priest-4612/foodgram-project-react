@@ -141,4 +141,6 @@ dmypy.json
 /data/*
 !/data/.gitkeep
 
+/backend/api_foodgram/dump_db/*
+
 .vscode
