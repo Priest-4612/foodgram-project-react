@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   db:
-    container_name: postgres_container
+    container_name: foodgram_postgres
     image: postgres:13.3
     command:
       - "foodgram"
@@ -56,7 +56,7 @@ services:
       - postgres
 
   pgadmin:
-    container_name: pgadmin_container
+    container_name: foodgram_pgadmin
     image: dpage/pgadmin4:5.7
     depends_on:
       - db
@@ -96,6 +96,7 @@ services:
       - ../frontend/:/app/result_build/
 
   nginx:
+    container_name: foodgram_nginx
     image: nginx:1.21.3-alpine
     ports:
       - "80:80"
