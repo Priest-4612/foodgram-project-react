@@ -52,30 +52,30 @@ services:
         limits:
           cpus: '1'
           memory: 4G
-    networks:
-      - postgres
+  #   networks:
+  #     - postgres
 
-  pgadmin:
-    container_name: pgadmin_container
-    image: dpage/pgadmin4:5.7
-    environment:
-      PGADMIN_DEFAULT_EMAIL: "habrpguser@habr.com"
-      PGADMIN_DEFAULT_PASSWORD: "pgadminpwd4habr"
-      PGADMIN_CONFIG_SERVER_MODE: "False"
-    depends_on:
-      - db
-    env_file:
-      - ./.env
-    ports:
-      - "5050:80"
-    restart: unless-stopped
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 1G
-    networks:
-      - postgres
+  # pgadmin:
+  #   container_name: pgadmin_container
+  #   image: dpage/pgadmin4:5.7
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: "habrpguser@habr.com"
+  #     PGADMIN_DEFAULT_PASSWORD: "pgadminpwd4habr"
+  #     PGADMIN_CONFIG_SERVER_MODE: "False"
+  #   depends_on:
+  #     - db
+  #   env_file:
+  #     - ./.env
+  #   ports:
+  #     - "5050:80"
+  #   restart: unless-stopped
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: '0.5'
+  #         memory: 1G
+  #   networks:
+  #     - postgres
 
   web:
     build:
@@ -111,9 +111,9 @@ services:
     depends_on:
       - frontend
 
-networks:
-  postgres:
-    driver: bridge
+# networks:
+#   postgres:
+#     driver: bridge
 
 volumes:
   static_value:
