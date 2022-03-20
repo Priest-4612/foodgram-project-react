@@ -54,8 +54,8 @@ services:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
       - ../application/frontend/build:/usr/share/nginx/html/
       - ../application/docs:/usr/share/nginx/html/api/docs/
-      - ../application/static_value:/var/www/static/
-      - ../application/media_value:/var/www/media/
+      - ../application/static_value:/var/www/static_backend/
+      - ../application/media_value:/var/www/media_backend/
 
     depends_on:
       - backend
