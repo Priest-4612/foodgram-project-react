@@ -38,8 +38,6 @@ services:
       - db
     env_file:
       - ./.env
-    networks:
-      - postgres
 
   frontend:
     container_name: foodgram_frontend
