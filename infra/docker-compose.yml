@@ -19,13 +19,8 @@ services:
     ports:
       - "5050:80"
     restart: unless-stopped
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 1G
 
-  web:
+  backend:
     container_name: foodgram_backend
     build:
       context: ../backend/api_foodgram
@@ -47,7 +42,7 @@ services:
     volumes:
       - ../frontend/:/app/result_build/
     depends_on:
-      - web
+      - backend
 
   nginx:
     container_name: foodgram_nginx
@@ -63,7 +58,7 @@ services:
       - media_value:/var/www/media/
 
     depends_on:
-      - web
+      - backend
       - frontend
 
 volumes:
