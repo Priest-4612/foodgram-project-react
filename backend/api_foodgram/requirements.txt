@@ -9,3 +9,4 @@ requests==2.26.0
 python-dotenv==0.13.0
 pillow
 drf_extra_fields==3.4.0
+django-colorfield==0.4.5
