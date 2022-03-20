@@ -73,7 +73,7 @@ services:
     networks:
       - postgres
 
-  backend:
+  web:
     container_name: foodgram_backend
     build:
       context: ../backend/api_foodgram
@@ -81,7 +81,7 @@ services:
     volumes:
       - static_value:/app/static/
       - media_value:/app/media/
-    # restart: always
+    restart: always
     depends_on:
       - db
     env_file:
@@ -94,6 +94,8 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ../frontend/:/app/result_build/
+    depends_on:
+      - web
 
   nginx:
     container_name: foodgram_nginx
