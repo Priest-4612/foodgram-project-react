@@ -114,3 +114,8 @@ services:
 networks:
   postgres:
     driver: bridge
+
+volumes:
+  static_value:
+  media_value:
+
