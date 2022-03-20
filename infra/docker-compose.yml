@@ -5,7 +5,7 @@ services:
     container_name: foodgram_postgres
     image: postgres:13.3
     command:
-      - "foodgram"
+      - "postgres"
       - "-c"
       - "max_connections=50"
       - "-c"
