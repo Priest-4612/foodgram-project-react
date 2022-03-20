@@ -111,7 +111,7 @@ services:
       - media_value:/var/www/media/
 
     depends_on:
-      - backend
+      - web
       - frontend
 
 networks:
