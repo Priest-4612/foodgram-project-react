@@ -1,15 +1,17 @@
 from django_filters import rest_framework as filters
 from rest_framework.filters import SearchFilter
 
-from recipes.models import Recipe  # isort:skip
+from recipes.models import Recipe, Tag  # isort:skip
 
 
 class RecipeFilter(filters.FilterSet):
     author = filters.AllValuesMultipleFilter(
         field_name='author__id'
     )
-    tags = filters.AllValuesMultipleFilter(
-        field_name='tags__slug'
+    tags = filters.ModelMultipleChoiceFilter(
+        field_name='tags__slug',
+        queryset=Tag.objects.all(),
+        to_field_name='slug',
     )
     is_favorited = filters.BooleanFilter(
         method='get_is_favorited'

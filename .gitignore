@@ -132,11 +132,11 @@ dmypy.json
 .idea
 
 # Хранилище статичных файлов
-/backend/api_foodgram/static/*
-!/backend/api_foodgram/.gitkeep
+/backend/api_foodgram/static_backend/*
+!/backend/api_foodgram/static_backend/.gitkeep
 
-/backend/api_foodgram/media/*
-!/backend/api_foodgram/media/.gitkeep
+/backend/api_foodgram/media_backend/*
+!/backend/api_foodgram/media_backend/.gitkeep
 
 /data/*
 !/data/.gitkeep
