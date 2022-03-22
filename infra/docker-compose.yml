@@ -22,7 +22,7 @@ services:
 
   backend:
     container_name: foodgram_backend
-    image: priest4612/foodgram:v.1.5.22.03.2022
+    image: priest4612/foodgram:v.1.6.22.03.2022
     volumes:
       - ../application/static_value:/app/static_backend/
       - ../application/media_value:/app/media_backend/
