@@ -10,23 +10,23 @@
 [![docker](https://img.shields.io/badge/-Docker-464646?style=flat-square&logo=docker)](https://www.docker.com/)
 [![GitHub%20Actions](https://img.shields.io/badge/-GitHub%20Actions-464646?style=flat-square&logo=GitHub%20actions)](https://github.com/features/actions)
 [![Yandex.Cloud](https://img.shields.io/badge/-Yandex.Cloud-464646?style=flat-square&logo=Yandex.Cloud)](https://cloud.yandex.ru/)
-=== [Полная документация к API](https://51.250.20.50/api/docs/) ===  
-=== [Панель администратора](https://51.250.20.50/admin/) ===
+=== [Полная документация к API](https://51.250.97.183/api/docs/) ===  
+=== [Панель администратора](https://51.250.97.183/admin/) ===
 ## **Описание**
 
-Посетить веб-сайт проекта ---> [51.250.20.50](https://51.250.20.50)
+Посетить веб-сайт проекта ---> [51.250.97.183](https://51.250.97.183)
 
 Онлайн-сервис, где пользователи могут публиковать рецепты, подписываться на публикации других авторов, добавлять понравившиеся рецепты в Избранное, а перед походом в магазин скачивать список ингредиентов для понравившихся блюд. Ресурсы FOODGRAM:
 
-+ [Ресурс AUTH](https://51.250.20.50/api/v1/auth/): аутентификация.
-+ [Ресурс USERS](https://51.250.20.50/api/v1/users/): пользователи.
-+ [Ресурс SUBSCRIPTIONS](https://51.250.20.50/api/v1/users/subscriptions/): пользователи, на которых подписан текущий пользователь.
-+ [Ресурс RECIPES](https://51.250.20.50/api/v1/recipes/): рецепты, которые можно добавить в Избранное или список покупок.
-+ [Ресурс INGREDIENTS](https://51.250.20.50/api/v1/ingredients/): список ингредиентов к блюдам с возможностью поиска по имени.
-+ [Ресурс TAGS](https://51.250.20.50/api/v1/tags/): списк тегов к блюдам.
-+ [Ресурс FAVORITES](https://51.250.20.50/api/v1/recipes/favorites/): добавление/удаление рецепта из списка Избранного.
-+ [Ресурс SHOPPING CART](https://51.250.20.50/api/v1/recipes/shopping_cart/): добавление/удаление рецепта из списка покупок.
-+ [Ресурс DOWNLOAD SHOPPING CART](https://51.250.20.50/api/v1/recipes/download_shopping_cart/): скачать список покупок.
++ [Ресурс AUTH](https://51.250.97.183/api/v1/auth/): аутентификация.
++ [Ресурс USERS](https://51.250.97.183/api/v1/users/): пользователи.
++ [Ресурс SUBSCRIPTIONS](https://51.250.97.183/api/v1/users/subscriptions/): пользователи, на которых подписан текущий пользователь.
++ [Ресурс RECIPES](https://51.250.97.183/api/v1/recipes/): рецепты, которые можно добавить в Избранное или список покупок.
++ [Ресурс INGREDIENTS](https://51.250.97.183/api/v1/ingredients/): список ингредиентов к блюдам с возможностью поиска по имени.
++ [Ресурс TAGS](https://51.250.97.183/api/v1/tags/): списк тегов к блюдам.
++ [Ресурс FAVORITES](https://51.250.97.183/api/v1/recipes/favorites/): добавление/удаление рецепта из списка Избранного.
++ [Ресурс SHOPPING CART](https://51.250.97.183/api/v1/recipes/shopping_cart/): добавление/удаление рецепта из списка покупок.
++ [Ресурс DOWNLOAD SHOPPING CART](https://51.250.97.183/api/v1/recipes/download_shopping_cart/): скачать список покупок.
 
 [Полная документация API (redoc.yaml)](https://github.com/AATDev21/foodgram-project-react/blob/master/docs/redoc.html)
 
@@ -50,7 +50,7 @@
 ```
 - APP_KEY='c38fd9e9130bb60a65ba0018bbd26a27c7d48f4a' # секретный ключ
 - APP_DEBUG=true # статус разработки
-- APP_URL=51.250.20.50 # адрес приложения
+- APP_URL=51.250.97.183 # адрес приложения
 
 - DB_ENGINE=django.db.backends.postgresql # указываем, что работаем с postgresql
 - DB_HOST=db  # название сервиса (контейнера)
@@ -72,7 +72,7 @@ docker-compose exec web python manage.py createsuperuser
 docker-compose exec web python manage.py collectstatic --no-input
 ```
 6. Проверьте работоспособность приложения:
-- зайдите на http://51.250.20.50/admin/ и убедитесь, что страница отображается полностью: статика подгрузилась;
+- зайдите на http://51.250.97.183/admin/ и убедитесь, что страница отображается полностью: статика подгрузилась;
 - авторизуйтесь под аккаунтом суперпользователя и убедитесь, что миграции прошли успешно;
 - протестируйте приложение, например, через Postman.
 
