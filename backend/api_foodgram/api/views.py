@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404
 from djoser import views as djoser
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
-from rest_framework.pagination import PageNumberPagination
+from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import (IsAuthenticated,
                                         IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
@@ -25,7 +25,7 @@ from users.models import Subscribe, User  # isort:skip
 class UserViewSet(djoser.UserViewSet):
     serializer_class = UserSerializer
     queryset = User.objects.all()
-    pagination_class = PageNumberPagination
+    pagination_class = LimitOffsetPagination
 
     @action(detail=False, methods=['get'])
     def me(self, request):
@@ -82,7 +82,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     serializer_class = RecipeSerializer
     queryset = Recipe.objects.all().order_by('-id')
     permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrAdmin]
-    pagination_class = PageNumberPagination
+    pagination_class = LimitOffsetPagination
     filterset_class = RecipeFilter
 
     def item_add_or_delete(self, request, serializer, model, pk):
