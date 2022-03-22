@@ -22,9 +22,7 @@ services:
 
   backend:
     container_name: foodgram_backend
-    build:
-      context: ../backend/api_foodgram
-      dockerfile: Dockerfile
+    image: priest4612/foodgram:v.1.22.03.2022
     volumes:
       - ../application/static_value:/app/static_backend/
       - ../application/media_value:/app/media_backend/
