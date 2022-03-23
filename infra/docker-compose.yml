@@ -57,7 +57,6 @@ services:
       - ../application/media_value:/var/www/media_backend/
 
     depends_on:
-      - backend
       - frontend
 
 volumes:

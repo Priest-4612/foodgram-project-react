@@ -42,7 +42,7 @@ class UserSerializer(djoser.UserSerializer):
         return (
             request
             and request.user.is_authenticated
-            and obj.subscribing.filter(subscriber=request.user).exists()
+            and request.user.subscriber.filter(author=obj.id).exists()
         )
 
     def create(self, validated_data):

@@ -1,5 +1,4 @@
 # **FOODGRAM | Продуктовый помощник**
-![example workflow](https://github.com/AATDev21/foodgram-project-react/actions/workflows/main.yml/badge.svg)  
   
 [![Python](https://img.shields.io/badge/-Python-464646?style=flat-square&logo=Python)](https://www.python.org/)
 [![Django](https://img.shields.io/badge/-Django-464646?style=flat-square&logo=Django)](https://www.djangoproject.com/)
@@ -10,25 +9,23 @@
 [![docker](https://img.shields.io/badge/-Docker-464646?style=flat-square&logo=docker)](https://www.docker.com/)
 [![GitHub%20Actions](https://img.shields.io/badge/-GitHub%20Actions-464646?style=flat-square&logo=GitHub%20actions)](https://github.com/features/actions)
 [![Yandex.Cloud](https://img.shields.io/badge/-Yandex.Cloud-464646?style=flat-square&logo=Yandex.Cloud)](https://cloud.yandex.ru/)
-=== [Полная документация к API](https://51.250.97.183/api/docs/) ===  
-=== [Панель администратора](https://51.250.97.183/admin/) ===
+=== [Полная документация к API](http://51.250.97.183/api/docs/) ===  
+=== [Панель администратора](http://51.250.97.183/admin/) ===
 ## **Описание**
 
-Посетить веб-сайт проекта ---> [51.250.97.183](https://51.250.97.183)
+Посетить веб-сайт проекта ---> [51.250.97.183](http://51.250.97.183)
 
 Онлайн-сервис, где пользователи могут публиковать рецепты, подписываться на публикации других авторов, добавлять понравившиеся рецепты в Избранное, а перед походом в магазин скачивать список ингредиентов для понравившихся блюд. Ресурсы FOODGRAM:
 
-+ [Ресурс AUTH](https://51.250.97.183/api/v1/auth/): аутентификация.
-+ [Ресурс USERS](https://51.250.97.183/api/v1/users/): пользователи.
-+ [Ресурс SUBSCRIPTIONS](https://51.250.97.183/api/v1/users/subscriptions/): пользователи, на которых подписан текущий пользователь.
-+ [Ресурс RECIPES](https://51.250.97.183/api/v1/recipes/): рецепты, которые можно добавить в Избранное или список покупок.
-+ [Ресурс INGREDIENTS](https://51.250.97.183/api/v1/ingredients/): список ингредиентов к блюдам с возможностью поиска по имени.
-+ [Ресурс TAGS](https://51.250.97.183/api/v1/tags/): списк тегов к блюдам.
-+ [Ресурс FAVORITES](https://51.250.97.183/api/v1/recipes/favorites/): добавление/удаление рецепта из списка Избранного.
-+ [Ресурс SHOPPING CART](https://51.250.97.183/api/v1/recipes/shopping_cart/): добавление/удаление рецепта из списка покупок.
-+ [Ресурс DOWNLOAD SHOPPING CART](https://51.250.97.183/api/v1/recipes/download_shopping_cart/): скачать список покупок.
-
-[Полная документация API (redoc.yaml)](https://github.com/AATDev21/foodgram-project-react/blob/master/docs/redoc.html)
++ [Ресурс AUTH](http://51.250.97.183/api/v1/auth/): аутентификация.
++ [Ресурс USERS](http://51.250.97.183/api/v1/users/): пользователи.
++ [Ресурс SUBSCRIPTIONS](http://51.250.97.183/api/v1/users/subscriptions/): пользователи, на которых подписан текущий пользователь.
++ [Ресурс RECIPES](http://51.250.97.183/api/v1/recipes/): рецепты, которые можно добавить в Избранное или список покупок.
++ [Ресурс INGREDIENTS](http://51.250.97.183/api/v1/ingredients/): список ингредиентов к блюдам с возможностью поиска по имени.
++ [Ресурс TAGS](http://51.250.97.183/api/v1/tags/): списк тегов к блюдам.
++ [Ресурс FAVORITES](http://51.250.97.183/api/v1/recipes/favorites/): добавление/удаление рецепта из списка Избранного.
++ [Ресурс SHOPPING CART](http://51.250.97.183/api/v1/recipes/shopping_cart/): добавление/удаление рецепта из списка покупок.
++ [Ресурс DOWNLOAD SHOPPING CART](http://51.250.97.183/api/v1/recipes/download_shopping_cart/): скачать список покупок.
 
 **Стек технологий:**
 * Python
@@ -76,3 +73,7 @@ docker-compose exec web python manage.py collectstatic --no-input
 - авторизуйтесь под аккаунтом суперпользователя и убедитесь, что миграции прошли успешно;
 - протестируйте приложение, например, через Postman.
 
+### Автор
+- Автор: Кричевцов Антон.
+- Когорта: 18
+- Репозиторий гит: https://github.com/Priest-4612/foodgram-project-react
