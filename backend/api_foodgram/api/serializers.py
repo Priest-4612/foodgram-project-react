@@ -24,12 +24,12 @@ ERROR_CANNOT_ADD_TWICE = 'Нельзя добвить дважды.'
 
 
 class UserSerializer(djoser.UserSerializer):
-    is_subscribe = serializers.SerializerMethodField()
+    is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
         fields = [
             'email', 'password', 'id', 'username',
-            'first_name', 'last_name', 'is_subscribe'
+            'first_name', 'last_name', 'is_subscribed'
         ]
         read_only_fields = ['id']
         extra_kwargs = {
@@ -37,7 +37,7 @@ class UserSerializer(djoser.UserSerializer):
         }
         model = User
 
-    def get_is_subscribe(self, obj):
+    def get_is_subscribed(self, obj):
         request = self.context.get('request')
         return (
             request
